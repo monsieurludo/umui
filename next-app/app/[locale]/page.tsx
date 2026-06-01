@@ -53,6 +53,7 @@ export default async function HomePage({ params: { locale } }: { params: { local
   const stats: { value: string; label: { fr: string; en: string } }[] =
     conceptPage?.stats?.length ? conceptPage.stats : FALLBACK_STATS
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const heroImage = conceptPage?.images?.find((img: any) => img?.asset) ?? null
 
   return (
