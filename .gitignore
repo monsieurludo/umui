@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Env files (contain API tokens — never commit)
+.env
+.env.local
+.env*.local
+
+# Next.js build output
+next-app/.next/
+next-app/out/
+
+# Sanity build output
+studio/dist/
+
+# OS
+.DS_Store
