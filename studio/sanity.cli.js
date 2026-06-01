@@ -5,4 +5,5 @@ export default defineCliConfig({
     projectId: 'icduvpb9',
     dataset: 'production',
   },
+  studioHost: 'umui-gardiens',
 })
