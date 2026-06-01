@@ -1,8 +1,9 @@
 export const revalidate = 0
 
 import { useTranslations } from 'next-intl'
+import Image from 'next/image'
 import type { Locale, ConceptPage } from '@/lib/types'
-import { sanityClient } from '@/lib/sanity'
+import { sanityClient, urlFor } from '@/lib/sanity'
 import { conceptPageQuery } from '@/lib/queries'
 
 const filmTextFr = [
@@ -65,6 +66,8 @@ export default async function ConceptPage({ params: { locale } }: { params: { lo
   const showItalicFr = "L'ensemble du programme dure 135 minutes et se déroule sans interruption."
   const showItalicEn = "The entire programme lasts 135 minutes and runs without interruption."
 
+  const images = conceptPage?.images ?? []
+
   return (
     <ConceptPage_Inner
       locale={locale}
@@ -72,6 +75,7 @@ export default async function ConceptPage({ params: { locale } }: { params: { lo
       showText={showText}
       directorNoteText={directorNoteText}
       showItalic={locale === 'fr' ? showItalicFr : showItalicEn}
+      images={images}
     />
   )
 }
@@ -82,12 +86,15 @@ function ConceptPage_Inner({
   showText,
   directorNoteText,
   showItalic,
+  images,
 }: {
   locale: Locale
   filmText: string[]
   showText: string[]
   directorNoteText: string
   showItalic: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  images: any[]
 }) {
   const t = useTranslations('concept')
 
@@ -105,8 +112,21 @@ function ConceptPage_Inner({
               <p key={i}>{para}</p>
             ))}
           </div>
-          <div className="md:col-span-2 aspect-[3/4] bg-[#F5F3F0] flex items-center justify-center">
-            <p className="text-sm text-[#6B6B6B]">Photo du film</p>
+          <div className="md:col-span-2 space-y-4">
+            {images.filter((img) => img?.asset).length > 0 ? images.filter((img) => img?.asset).map((img, i) => (
+              <div key={i} className="aspect-[3/4] bg-[#F5F3F0] relative overflow-hidden">
+                <Image
+                  src={urlFor(img).width(600).height(800).url()}
+                  alt=""
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            )) : (
+              <div className="aspect-[3/4] bg-[#F5F3F0] flex items-center justify-center">
+                <p className="text-sm text-[#6B6B6B]">Photo du film</p>
+              </div>
+            )}
           </div>
         </div>
       </section>

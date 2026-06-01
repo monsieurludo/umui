@@ -2,8 +2,9 @@ export const revalidate = 0
 
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
+import Image from 'next/image'
 import ShowDateCard from '@/components/ShowDateCard'
-import { sanityClient } from '@/lib/sanity'
+import { sanityClient, urlFor } from '@/lib/sanity'
 import { showDatesQuery, siteSettingsQuery, conceptPageQuery } from '@/lib/queries'
 import { ShowDate, Locale, ConceptPage, SiteSettings } from '@/lib/types'
 
@@ -52,12 +53,15 @@ export default async function HomePage({ params: { locale } }: { params: { local
   const stats: { value: string; label: { fr: string; en: string } }[] =
     conceptPage?.stats?.length ? conceptPage.stats : FALLBACK_STATS
 
+  const heroImage = conceptPage?.images?.find((img: any) => img?.asset) ?? null
+
   return (
     <HomePage_Inner
       shows={upcomingShows}
       locale={locale}
       tagline={siteSettings?.tagline?.[locale] || null}
       stats={stats}
+      heroImage={heroImage}
     />
   )
 }
@@ -67,11 +71,14 @@ function HomePage_Inner({
   locale,
   tagline,
   stats,
+  heroImage,
 }: {
   shows: ShowDate[]
   locale: Locale
   tagline: string | null
   stats: { value: string; label: { fr: string; en: string } }[]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  heroImage: any
 }) {
   const t = useTranslations('home')
   const th = useTranslations('hero')
@@ -121,9 +128,18 @@ function HomePage_Inner({
             </Link>
           </div>
           <div className="aspect-[4/5] bg-[#F5F3F0] relative overflow-hidden">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <p className="text-sm text-[#6B6B6B]">Photo de performance</p>
-            </div>
+            {heroImage ? (
+              <Image
+                src={urlFor(heroImage).width(800).height(1000).url()}
+                alt="UMUI — Gardiens des Traditions"
+                fill
+                className="object-cover"
+              />
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <p className="text-sm text-[#6B6B6B]">Photo de performance</p>
+              </div>
+            )}
           </div>
         </div>
       </section>
