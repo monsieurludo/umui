@@ -1,0 +1,59 @@
+{
+  "nav": {
+    "concept": "Concept",
+    "programme": "Programme",
+    "artistes": "Artistes",
+    "billets": "Billets",
+    "contact": "Contact"
+  },
+  "hero": {
+    "supertitle": "DANSE TRADITIONNELLE JAPONAISE ET OKINAWAÏENNE",
+    "title": "UMUI — Gardiens des Traditions",
+    "subtitle": "Tournée Suisse · Septembre 2026",
+    "cta": "DÉCOUVRIR"
+  },
+  "home": {
+    "conceptLabel": "À PROPOS",
+    "conceptTitle": "Concept",
+    "conceptLinkLabel": "En savoir plus →",
+    "programmeLabel": "TOURNÉE",
+    "programmeTitle": "Programme",
+    "programmeLinkLabel": "TOUS LES BILLETS"
+  },
+  "concept": {
+    "filmLabel": "LE FILM",
+    "showLabel": "LE SPECTACLE",
+    "directorLabel": "NOTE D'INTENTION"
+  },
+  "programme": {
+    "title": "Programme",
+    "parallelTitle": "Activités parallèles",
+    "reserver": "Réserver →",
+    "aVenir": "À venir"
+  },
+  "artistes": {
+    "title": "Les Artistes",
+    "subtitle": "Rencontrez les gardiens des traditions ancestrales.",
+    "groupOkinawa": "Artistes d'Okinawa",
+    "groupSwiss": "Musiciennes suisses",
+    "groupFilm": "Équipe du film"
+  },
+  "billets": {
+    "title": "Billets",
+    "subtitle": "Réservez vos places pour les représentations.",
+    "reserver": "Réserver →",
+    "aVenir": "À venir",
+    "soldOut": "Complet"
+  },
+  "contact": {
+    "title": "Contact",
+    "suisse": "SUISSE",
+    "japon": "JAPON",
+    "partenaires": "Partenaires"
+  },
+  "footer": {
+    "tagline": "Gardiens des Traditions",
+    "copyright": "© 2026 ADIGARA Switzerland & Garaman Hall. Tous droits réservés.",
+    "mentions": "Mentions légales"
+  }
+}

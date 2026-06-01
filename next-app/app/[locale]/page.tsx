@@ -1,0 +1,117 @@
+import { useTranslations } from 'next-intl'
+import Link from 'next/link'
+import ShowDateCard from '@/components/ShowDateCard'
+import { sanityClient } from '@/lib/sanity'
+import { showDatesQuery } from '@/lib/queries'
+import { ShowDate, Locale } from '@/lib/types'
+
+// Static placeholder show dates while Sanity is not yet connected
+const PLACEHOLDER_SHOWS: ShowDate[] = [
+  { _id: '1', date: '2026-09-11T20:00:00', city: 'Onex', venue: 'Ciné-théâtre', address: 'Rue des Bossons 7, 1213 Onex', status: 'confirmed' },
+  { _id: '2', date: '2026-09-12T19:00:00', city: 'Berne', venue: 'Musée d\'Histoire de Berne', address: 'Helvetiaplatz 5, 3005 Bern', status: 'confirmed', eventLabel: 'Nihon Matsuri' },
+  { _id: '3', date: '2026-09-13T18:00:00', city: 'Neuchâtel', venue: 'Temple du Bas', address: 'Rue du Temple-Neuf 5, 2000 Neuchâtel', status: 'confirmed', eventLabel: 'Mo Ashibi — Journée Okinawa' },
+  { _id: '4', date: '2026-09-17T20:00:00', city: 'Porrentruy', venue: 'Salle de l\'INTER', address: 'Allée des Soupirs 15, 2900 Porrentruy', status: 'confirmed', notes: { fr: 'Dans le cadre de la saison EVIDANSE 2026-2027', en: 'Part of the EVIDANSE 2026-2027 season' } },
+  { _id: '5', date: '2026-09-19T19:00:00', city: 'Évolène', venue: 'Chapelle des Haudères', address: '1984 Les Haudères', status: 'confirmed', eventLabel: 'Festival Japon en Hérens' },
+  { _id: '6', date: '2026-09-22T20:00:00', city: 'Le Sentier', venue: 'Cinéma la Bobine', address: 'Chemin des Cytises 1, 1347 Le Sentier', status: 'confirmed' },
+  { _id: '7', date: '2026-09-24T20:00:00', city: 'Zurich', venue: 'À confirmer', address: 'Zurich', status: 'pending' },
+]
+
+async function getShows(): Promise<ShowDate[]> {
+  try {
+    const shows = await sanityClient.fetch(showDatesQuery)
+    return shows?.length ? shows : PLACEHOLDER_SHOWS
+  } catch {
+    return PLACEHOLDER_SHOWS
+  }
+}
+
+export default async function HomePage({ params: { locale } }: { params: { locale: Locale } }) {
+  const shows = await getShows()
+  const upcomingShows = shows.slice(0, 5)
+
+  return (
+    <HomePage_Inner shows={upcomingShows} locale={locale} />
+  )
+}
+
+function HomePage_Inner({ shows, locale }: { shows: ShowDate[]; locale: Locale }) {
+  const t = useTranslations('home')
+  const th = useTranslations('hero')
+
+  return (
+    <>
+      {/* Hero */}
+      <section className="min-h-[85vh] flex flex-col items-center justify-center text-center px-6 bg-[#F5F3F0]">
+        <p className="text-xs tracking-[0.3em] text-[#6B6B6B] mb-6">{th('supertitle')}</p>
+        <h1 className="font-serif text-5xl md:text-7xl font-medium text-[#1A1A1A] max-w-3xl leading-tight mb-6">
+          {th('title')}
+        </h1>
+        <p className="text-base text-[#6B6B6B] mb-10">{th('subtitle')}</p>
+        <Link href={`/${locale}/concept`}
+          className="bg-[#C8702A] text-white text-xs font-medium tracking-[0.2em] px-8 py-4 hover:bg-[#b5621f] transition-colors">
+          {th('cta')}
+        </Link>
+      </section>
+
+      {/* Concept teaser */}
+      <section className="max-w-6xl mx-auto px-6 py-24">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+          <div>
+            <p className="text-xs font-medium tracking-widest text-[#C8702A] mb-4">{t('conceptLabel')}</p>
+            <h2 className="font-serif text-4xl md:text-5xl text-[#1A1A1A] mb-6">{t('conceptTitle')}</h2>
+            <p className="text-[#6B6B6B] leading-relaxed mb-4">
+              {locale === 'fr'
+                ? '"UMUI - Gardiens des Traditions" est la combinaison d\'un film et d\'un spectacle de danse qui invite le public à une immersion dans l\'essence même d\'Okinawa, cet "autre Japon" dont la richesse culturelle demeure encore largement méconnue.'
+                : '"UMUI — Guardians of Traditions" combines a documentary film and a dance performance that invites the audience into the very essence of Okinawa, this "other Japan" whose cultural richness remains largely unknown.'}
+            </p>
+            <p className="text-[#6B6B6B] leading-relaxed mb-8">
+              {locale === 'fr'
+                ? 'Au fil des rencontres dans le village de Ginoza, guidé par le Shishi (chien-lion), le spectacle met en lumière des traditions qui relient les générations et façonnent l\'identité d\'Okinawa.'
+                : 'Through encounters in the village of Ginoza, guided by the Shishi (lion-dog), the show illuminates traditions that connect generations and shape the identity of Okinawa.'}
+            </p>
+            <div className="flex gap-12 mb-8">
+              {[
+                { value: '7', label: locale === 'fr' ? 'Villes' : 'Cities' },
+                { value: '13', label: locale === 'fr' ? 'Artistes' : 'Artists' },
+                { value: '135', label: locale === 'fr' ? 'Min.' : 'Min.' },
+              ].map(stat => (
+                <div key={stat.value}>
+                  <p className="font-serif text-3xl text-[#1A1A1A]">{stat.value}</p>
+                  <p className="text-xs text-[#6B6B6B] mt-1">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+            <Link href={`/${locale}/concept`}
+              className="text-sm text-[#C8702A] font-medium hover:underline">
+              {t('conceptLinkLabel')}
+            </Link>
+          </div>
+          <div className="aspect-[4/5] bg-[#F5F3F0] relative overflow-hidden">
+            <div className="absolute inset-0 flex items-center justify-center">
+              <p className="text-sm text-[#6B6B6B]">Photo de performance</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Programme strip */}
+      <section className="bg-[#F5F3F0] py-24">
+        <div className="max-w-6xl mx-auto px-6">
+          <p className="text-xs font-medium tracking-widest text-[#C8702A] mb-4 text-center">{t('programmeLabel')}</p>
+          <h2 className="font-serif text-4xl md:text-5xl text-[#1A1A1A] mb-12 text-center">{t('programmeTitle')}</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-10">
+            {shows.map(show => (
+              <ShowDateCard key={show._id} show={show} locale={locale} />
+            ))}
+          </div>
+          <div className="text-center">
+            <Link href={`/${locale}/billets`}
+              className="inline-block border border-[#1A1A1A] text-[#1A1A1A] text-xs font-medium tracking-widest px-8 py-4 hover:bg-[#1A1A1A] hover:text-white transition-colors">
+              {t('programmeLinkLabel')}
+            </Link>
+          </div>
+        </div>
+      </section>
+    </>
+  )
+}
