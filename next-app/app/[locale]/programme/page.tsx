@@ -1,3 +1,5 @@
+export const revalidate = 0
+
 import { Locale, ShowDate } from '@/lib/types'
 import { sanityClient } from '@/lib/sanity'
 import { showDatesQuery } from '@/lib/queries'

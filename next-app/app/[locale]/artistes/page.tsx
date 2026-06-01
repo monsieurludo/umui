@@ -1,3 +1,5 @@
+export const revalidate = 0
+
 import { Locale, Artist } from '@/lib/types'
 import { sanityClient } from '@/lib/sanity'
 import { artistsQuery } from '@/lib/queries'

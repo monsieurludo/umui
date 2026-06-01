@@ -37,11 +37,11 @@ export default function Nav() {
             </Link>
           ))}
           <div className="ml-4 pl-4 border-l border-[#E8E4DE] text-sm font-medium">
-            <Link href={switchLocalePath} className="text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors">
-              {locale.toUpperCase()}
-            </Link>
+            <span className="text-[#1A1A1A]">{locale.toUpperCase()}</span>
             <span className="mx-1.5 text-[#E8E4DE]">/</span>
-            <span className="text-[#1A1A1A]">{otherLocale.toUpperCase()}</span>
+            <Link href={switchLocalePath} className="text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors">
+              {otherLocale.toUpperCase()}
+            </Link>
           </div>
         </div>
 
@@ -70,10 +70,10 @@ export default function Nav() {
             </Link>
           ))}
           <div className="mt-4 pt-4 border-t border-[#E8E4DE] text-sm font-medium">
-            <Link href={switchLocalePath} onClick={() => setMenuOpen(false)}
-              className="text-[#C8702A] font-medium">{locale.toUpperCase()}</Link>
+            <span className="text-[#C8702A] font-medium">{locale.toUpperCase()}</span>
             <span className="mx-1.5 text-[#6B6B6B]">/</span>
-            <span className="text-[#6B6B6B]">{otherLocale.toUpperCase()}</span>
+            <Link href={switchLocalePath} onClick={() => setMenuOpen(false)}
+              className="text-[#6B6B6B]">{otherLocale.toUpperCase()}</Link>
           </div>
         </div>
       )}

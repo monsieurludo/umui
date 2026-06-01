@@ -5,8 +5,8 @@ import { schemaTypes } from './schemas'
 export default defineConfig({
   name: 'umui',
   title: 'UMUI — Gardiens des Traditions',
-  projectId: process.env.SANITY_STUDIO_PROJECT_ID || 'placeholder',
-  dataset: process.env.SANITY_STUDIO_DATASET || 'production',
+  projectId: 'icduvpb9',
+  dataset: 'production',
   plugins: [
     structureTool(),
   ],

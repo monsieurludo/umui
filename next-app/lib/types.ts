@@ -51,13 +51,24 @@ export type ContactInfo = {
     address: string
     email: string
     phone: string
+    website?: string
+    contactPerson?: string
   }
   japanContact: {
     name: string
     address: string
     email: string
     phone: string
+    website?: string
+    contactPerson?: string
   }
+}
+
+export type SiteSettings = {
+  title?: string
+  tagline?: LocalizedString
+  heroImage?: any
+  heroCtaLabel?: LocalizedString
 }
 
 export type ConceptPage = {

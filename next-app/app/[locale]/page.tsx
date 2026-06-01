@@ -1,9 +1,11 @@
+export const revalidate = 0
+
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import ShowDateCard from '@/components/ShowDateCard'
 import { sanityClient } from '@/lib/sanity'
-import { showDatesQuery } from '@/lib/queries'
-import { ShowDate, Locale } from '@/lib/types'
+import { showDatesQuery, siteSettingsQuery, conceptPageQuery } from '@/lib/queries'
+import { ShowDate, Locale, ConceptPage, SiteSettings } from '@/lib/types'
 
 // Static placeholder show dates while Sanity is not yet connected
 const PLACEHOLDER_SHOWS: ShowDate[] = [
@@ -16,25 +18,61 @@ const PLACEHOLDER_SHOWS: ShowDate[] = [
   { _id: '7', date: '2026-09-24T20:00:00', city: 'Zurich', venue: 'À confirmer', address: 'Zurich', status: 'pending' },
 ]
 
-async function getShows(): Promise<ShowDate[]> {
+const FALLBACK_STATS = [
+  { value: '7', label: { fr: 'Villes', en: 'Cities' } },
+  { value: '13', label: { fr: 'Artistes', en: 'Artists' } },
+  { value: '135', label: { fr: 'Min.', en: 'Min.' } },
+]
+
+async function getPageData(): Promise<{
+  shows: ShowDate[]
+  siteSettings: SiteSettings | null
+  conceptPage: ConceptPage | null
+}> {
   try {
-    const shows = await sanityClient.fetch(showDatesQuery)
-    return shows?.length ? shows : PLACEHOLDER_SHOWS
+    const [shows, siteSettings, conceptPage] = await Promise.all([
+      sanityClient.fetch(showDatesQuery),
+      sanityClient.fetch(siteSettingsQuery),
+      sanityClient.fetch(conceptPageQuery),
+    ])
+    return {
+      shows: shows?.length ? shows : PLACEHOLDER_SHOWS,
+      siteSettings: siteSettings || null,
+      conceptPage: conceptPage || null,
+    }
   } catch {
-    return PLACEHOLDER_SHOWS
+    return { shows: PLACEHOLDER_SHOWS, siteSettings: null, conceptPage: null }
   }
 }
 
 export default async function HomePage({ params: { locale } }: { params: { locale: Locale } }) {
-  const shows = await getShows()
+  const { shows, siteSettings, conceptPage } = await getPageData()
   const upcomingShows = shows.slice(0, 5)
 
+  const stats: { value: string; label: { fr: string; en: string } }[] =
+    conceptPage?.stats?.length ? conceptPage.stats : FALLBACK_STATS
+
   return (
-    <HomePage_Inner shows={upcomingShows} locale={locale} />
+    <HomePage_Inner
+      shows={upcomingShows}
+      locale={locale}
+      tagline={siteSettings?.tagline?.[locale] || null}
+      stats={stats}
+    />
   )
 }
 
-function HomePage_Inner({ shows, locale }: { shows: ShowDate[]; locale: Locale }) {
+function HomePage_Inner({
+  shows,
+  locale,
+  tagline,
+  stats,
+}: {
+  shows: ShowDate[]
+  locale: Locale
+  tagline: string | null
+  stats: { value: string; label: { fr: string; en: string } }[]
+}) {
   const t = useTranslations('home')
   const th = useTranslations('hero')
 
@@ -46,7 +84,7 @@ function HomePage_Inner({ shows, locale }: { shows: ShowDate[]; locale: Locale }
         <h1 className="font-serif text-5xl md:text-7xl font-medium text-[#1A1A1A] max-w-3xl leading-tight mb-6">
           {th('title')}
         </h1>
-        <p className="text-base text-[#6B6B6B] mb-10">{th('subtitle')}</p>
+        <p className="text-base text-[#6B6B6B] mb-10">{tagline || th('subtitle')}</p>
         <Link href={`/${locale}/concept`}
           className="bg-[#C8702A] text-white text-xs font-medium tracking-[0.2em] px-8 py-4 hover:bg-[#b5621f] transition-colors">
           {th('cta')}
@@ -70,14 +108,10 @@ function HomePage_Inner({ shows, locale }: { shows: ShowDate[]; locale: Locale }
                 : 'Through encounters in the village of Ginoza, guided by the Shishi (lion-dog), the show illuminates traditions that connect generations and shape the identity of Okinawa.'}
             </p>
             <div className="flex gap-12 mb-8">
-              {[
-                { value: '7', label: locale === 'fr' ? 'Villes' : 'Cities' },
-                { value: '13', label: locale === 'fr' ? 'Artistes' : 'Artists' },
-                { value: '135', label: locale === 'fr' ? 'Min.' : 'Min.' },
-              ].map(stat => (
+              {stats.map(stat => (
                 <div key={stat.value}>
                   <p className="font-serif text-3xl text-[#1A1A1A]">{stat.value}</p>
-                  <p className="text-xs text-[#6B6B6B] mt-1">{stat.label}</p>
+                  <p className="text-xs text-[#6B6B6B] mt-1">{stat.label[locale]}</p>
                 </div>
               ))}
             </div>
