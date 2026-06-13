@@ -37,7 +37,6 @@ export default {
       description: 'Image affichée en arrière-plan dans la section héro',
       type: 'image',
       options: { hotspot: true },
-      fields: [{ name: 'asset', type: 'reference', to: [{ type: 'sanity.imageAsset' }] }],
     },
     {
       name: 'videoUrl',
