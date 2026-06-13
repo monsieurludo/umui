@@ -1,7 +1,12 @@
+export const revalidate = 0
+
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
+import { sanityClient } from '@/lib/sanity'
+import { siteSettingsQuery } from '@/lib/queries'
+import { SiteSettings } from '@/lib/types'
 import '../globals.css'
 
 export default async function LocaleLayout({
@@ -13,13 +18,20 @@ export default async function LocaleLayout({
 }) {
   const messages = await getMessages()
 
+  let siteSettings: SiteSettings | null = null
+  try {
+    siteSettings = await sanityClient.fetch(siteSettingsQuery)
+  } catch {
+    siteSettings = null
+  }
+
   return (
     <html lang={locale}>
       <body>
         <NextIntlClientProvider messages={messages}>
           <Nav />
           <main className="pt-14">{children}</main>
-          <Footer locale={locale} />
+          <Footer locale={locale} siteSettings={siteSettings} />
         </NextIntlClientProvider>
       </body>
     </html>

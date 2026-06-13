@@ -25,5 +25,10 @@ export const conceptPageQuery = `*[_type == "conceptPage"][0] {
 }`
 
 export const siteSettingsQuery = `*[_type == "siteSettings"][0] {
-  title, tagline, heroImage { asset-> }, heroCtaLabel
+  title, tagline, supertitle, heroCtaLabel,
+  heroImage { asset-> },
+  videoUrl,
+  conceptTeaserText,
+  footerTextSwiss, footerTextJapan,
+  instagramUrl, copyright
 }`

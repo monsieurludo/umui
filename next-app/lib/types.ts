@@ -64,11 +64,27 @@ export type ContactInfo = {
   }
 }
 
+export type FooterContact = {
+  label?: string
+  name?: string
+  address?: string
+  contactPerson?: string
+  phone?: string
+  email?: string
+}
+
 export type SiteSettings = {
   title?: string
   tagline?: LocalizedString
+  supertitle?: LocalizedString
   heroImage?: any
   heroCtaLabel?: LocalizedString
+  videoUrl?: string
+  conceptTeaserText?: LocalizedText
+  footerTextSwiss?: FooterContact
+  footerTextJapan?: FooterContact
+  instagramUrl?: string
+  copyright?: LocalizedString
 }
 
 export type ConceptPage = {

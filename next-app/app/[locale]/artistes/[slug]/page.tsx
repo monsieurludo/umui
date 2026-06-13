@@ -31,7 +31,7 @@ export default async function ArtistPage({ params: { locale, slug } }: { params:
       </Link>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-start mt-8">
         <div className="aspect-[3/4] bg-[#F5F3F0] relative overflow-hidden">
-          {artist.photo ? (
+          {artist.photo?.asset ? (
             <Image
               src={urlFor(artist.photo).width(800).height(1067).url()}
               alt={artist.name}

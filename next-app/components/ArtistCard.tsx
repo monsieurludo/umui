@@ -7,7 +7,7 @@ export default function ArtistCard({ artist, locale }: { artist: Artist; locale:
   return (
     <Link href={`/${locale}/artistes/${artist.slug.current}`} className="group block">
       <div className="aspect-[3/4] bg-[#F5F3F0] mb-4 overflow-hidden relative">
-        {artist.photo ? (
+        {artist.photo?.asset ? (
           <Image
             src={urlFor(artist.photo).width(600).height(800).url()}
             alt={artist.name}

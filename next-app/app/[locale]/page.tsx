@@ -54,15 +54,18 @@ export default async function HomePage({ params: { locale } }: { params: { local
     conceptPage?.stats?.length ? conceptPage.stats : FALLBACK_STATS
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const heroImage = conceptPage?.images?.find((img: any) => img?.asset) ?? null
+  const heroImage = siteSettings?.heroImage?.asset ? siteSettings.heroImage : null
 
   return (
     <HomePage_Inner
       shows={upcomingShows}
       locale={locale}
       tagline={siteSettings?.tagline?.[locale] || null}
+      supertitle={siteSettings?.supertitle?.[locale] || null}
       stats={stats}
       heroImage={heroImage}
+      videoUrl={siteSettings?.videoUrl || null}
+      conceptTeaserText={siteSettings?.conceptTeaserText?.[locale] || null}
     />
   )
 }
@@ -71,50 +74,103 @@ function HomePage_Inner({
   shows,
   locale,
   tagline,
+  supertitle,
   stats,
   heroImage,
+  videoUrl,
+  conceptTeaserText,
 }: {
   shows: ShowDate[]
   locale: Locale
   tagline: string | null
+  supertitle: string | null
   stats: { value: string; label: { fr: string; en: string } }[]
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   heroImage: any
+  videoUrl: string | null
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  conceptTeaserText: any[] | null
 }) {
   const t = useTranslations('home')
   const th = useTranslations('hero')
 
+  // Extract Vimeo video ID from URL like https://vimeo.com/811180335
+  const vimeoId = videoUrl ? videoUrl.split('/').filter(Boolean).pop() : null
+
+  // Render concept teaser text from Sanity blocks
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const conceptParas: string[] = conceptTeaserText?.length
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ? conceptTeaserText.map((block: any) => block.children?.map((c: any) => c.text).join('') ?? '')
+    : []
+
+  const fallbackParas = locale === 'fr'
+    ? [
+        '"UMUI - Gardiens des Traditions" est la combinaison d\'un film et d\'un spectacle de danse qui invite le public à une immersion dans l\'essence même d\'Okinawa, cet "autre Japon" dont la richesse culturelle demeure encore largement méconnue.',
+        'Au fil des rencontres dans le village de Ginoza, guidé par le Shishi (chien-lion), le spectacle met en lumière des traditions qui relient les générations et façonnent l\'identité d\'Okinawa.',
+      ]
+    : [
+        '"UMUI — Guardians of Traditions" combines a documentary film and a dance performance that invites the audience into the very essence of Okinawa, this "other Japan" whose cultural richness remains largely unknown.',
+        'Through encounters in the village of Ginoza, guided by the Shishi (lion-dog), the show illuminates traditions that connect generations and shape the identity of Okinawa.',
+      ]
+
+  const teaserParas = conceptParas.length ? conceptParas : fallbackParas
+
   return (
     <>
       {/* Hero */}
-      <section className="min-h-[85vh] flex flex-col items-center justify-center text-center px-6 bg-[#F5F3F0]">
-        <p className="text-xs tracking-[0.3em] text-[#6B6B6B] mb-6">{th('supertitle')}</p>
-        <h1 className="font-serif text-5xl md:text-7xl font-medium text-[#1A1A1A] max-w-3xl leading-tight mb-6">
-          {th('title')}
-        </h1>
-        <p className="text-base text-[#6B6B6B] mb-10">{tagline || th('subtitle')}</p>
-        <Link href={`/${locale}/concept`}
-          className="bg-[#C8702A] text-white text-xs font-medium tracking-[0.2em] px-8 py-4 hover:bg-[#b5621f] transition-colors">
-          {th('cta')}
-        </Link>
+      <section className="min-h-[85vh] flex flex-col items-center justify-center text-center px-6 relative bg-[#F5F3F0]">
+        {heroImage && (
+          <Image
+            src={urlFor(heroImage).width(1600).height(900).url()}
+            alt="UMUI — Gardiens des Traditions"
+            fill
+            className="object-cover"
+            priority
+          />
+        )}
+        {heroImage && <div className="absolute inset-0 bg-black/40" />}
+        <div className="relative z-10">
+          <p className={`text-xs tracking-[0.3em] mb-6 ${heroImage ? 'text-white/80' : 'text-[#6B6B6B]'}`}>
+            {supertitle || th('supertitle')}
+          </p>
+          <h1 className={`font-serif text-5xl md:text-7xl font-medium max-w-3xl leading-tight mb-6 ${heroImage ? 'text-white' : 'text-[#1A1A1A]'}`}>
+            {th('title')}
+          </h1>
+          <p className={`text-base mb-10 ${heroImage ? 'text-white/80' : 'text-[#6B6B6B]'}`}>{tagline || th('subtitle')}</p>
+          <Link href={`/${locale}/concept`}
+            className="bg-[#C8702A] text-white text-xs font-medium tracking-[0.2em] px-8 py-4 hover:bg-[#b5621f] transition-colors">
+            {th('cta')}
+          </Link>
+        </div>
       </section>
+
+      {/* Video section */}
+      {vimeoId && (
+        <section className="bg-[#1A1A1A] py-16">
+          <div className="max-w-4xl mx-auto px-6">
+            <div className="relative w-full pt-[56.25%]">
+              <iframe
+                src={`https://player.vimeo.com/video/${vimeoId}?title=0&byline=0&portrait=0`}
+                className="absolute inset-0 w-full h-full"
+                allow="autoplay; fullscreen"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Concept teaser */}
       <section className="max-w-6xl mx-auto px-6 py-24">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
           <div>
             <p className="text-xs font-medium tracking-widest text-[#C8702A] mb-4">{t('conceptLabel')}</p>
-            <h2 className="font-serif text-4xl md:text-5xl text-[#1A1A1A] mb-6">{t('conceptTitle')}</h2>
-            <p className="text-[#6B6B6B] leading-relaxed mb-4">
-              {locale === 'fr'
-                ? '"UMUI - Gardiens des Traditions" est la combinaison d\'un film et d\'un spectacle de danse qui invite le public à une immersion dans l\'essence même d\'Okinawa, cet "autre Japon" dont la richesse culturelle demeure encore largement méconnue.'
-                : '"UMUI — Guardians of Traditions" combines a documentary film and a dance performance that invites the audience into the very essence of Okinawa, this "other Japan" whose cultural richness remains largely unknown.'}
-            </p>
-            <p className="text-[#6B6B6B] leading-relaxed mb-8">
-              {locale === 'fr'
-                ? 'Au fil des rencontres dans le village de Ginoza, guidé par le Shishi (chien-lion), le spectacle met en lumière des traditions qui relient les générations et façonnent l\'identité d\'Okinawa.'
-                : 'Through encounters in the village of Ginoza, guided by the Shishi (lion-dog), the show illuminates traditions that connect generations and shape the identity of Okinawa.'}
-            </p>
+            {teaserParas.map((para, i) => (
+              <p key={i} className={`text-[#6B6B6B] leading-relaxed ${i < teaserParas.length - 1 ? 'mb-4' : 'mb-8'}`}>
+                {para}
+              </p>
+            ))}
             <div className="flex gap-12 mb-8">
               {stats.map(stat => (
                 <div key={stat.value}>
@@ -129,18 +185,9 @@ function HomePage_Inner({
             </Link>
           </div>
           <div className="aspect-[4/5] bg-[#F5F3F0] relative overflow-hidden">
-            {heroImage ? (
-              <Image
-                src={urlFor(heroImage).width(800).height(1000).url()}
-                alt="UMUI — Gardiens des Traditions"
-                fill
-                className="object-cover"
-              />
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <p className="text-sm text-[#6B6B6B]">Photo de performance</p>
-              </div>
-            )}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <p className="text-sm text-[#6B6B6B]">Photo de performance</p>
+            </div>
           </div>
         </div>
       </section>

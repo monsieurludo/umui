@@ -23,7 +23,7 @@ export default {
         list: [
           { title: "Artistes d'Okinawa", value: 'okinawa-artists' },
           { title: 'Musiciennes suisses', value: 'swiss-musicians' },
-          { title: 'Équipe du film', value: 'film-crew' },
+          { title: 'Équipe artistique', value: 'film-crew' },
         ],
         layout: 'radio',
       },
