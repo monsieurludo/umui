@@ -55,6 +55,8 @@ export default async function HomePage({ params: { locale } }: { params: { local
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const heroImage = siteSettings?.heroImage?.asset ? siteSettings.heroImage : null
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const conceptTeaserImage = siteSettings?.conceptTeaserImage?.asset ? siteSettings.conceptTeaserImage : null
 
   return (
     <HomePage_Inner
@@ -64,6 +66,7 @@ export default async function HomePage({ params: { locale } }: { params: { local
       supertitle={siteSettings?.supertitle?.[locale] || null}
       stats={stats}
       heroImage={heroImage}
+      conceptTeaserImage={conceptTeaserImage}
       videoUrl={siteSettings?.videoUrl || null}
       conceptTeaserText={siteSettings?.conceptTeaserText?.[locale] || null}
     />
@@ -77,6 +80,7 @@ function HomePage_Inner({
   supertitle,
   stats,
   heroImage,
+  conceptTeaserImage,
   videoUrl,
   conceptTeaserText,
 }: {
@@ -87,6 +91,8 @@ function HomePage_Inner({
   stats: { value: string; label: { fr: string; en: string } }[]
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   heroImage: any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  conceptTeaserImage: any
   videoUrl: string | null
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   conceptTeaserText: any[] | null
@@ -185,9 +191,18 @@ function HomePage_Inner({
             </Link>
           </div>
           <div className="aspect-[4/5] bg-[#F5F3F0] relative overflow-hidden">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <p className="text-sm text-[#6B6B6B]">Photo de performance</p>
-            </div>
+            {conceptTeaserImage ? (
+              <Image
+                src={urlFor(conceptTeaserImage).width(800).height(1000).url()}
+                alt="UMUI — Gardiens des Traditions"
+                fill
+                className="object-cover"
+              />
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <p className="text-sm text-[#6B6B6B]">Photo de performance</p>
+              </div>
+            )}
           </div>
         </div>
       </section>

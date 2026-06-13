@@ -80,6 +80,7 @@ export type SiteSettings = {
   heroImage?: any
   heroCtaLabel?: LocalizedString
   videoUrl?: string
+  conceptTeaserImage?: any
   conceptTeaserText?: LocalizedText
   footerTextSwiss?: FooterContact
   footerTextJapan?: FooterContact

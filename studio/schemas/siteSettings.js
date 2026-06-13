@@ -45,6 +45,13 @@ export default {
       type: 'url',
     },
     {
+      name: 'conceptTeaserImage',
+      title: 'Image "À propos" (homepage, section concept)',
+      description: 'Photo de performance affichée à droite du texte À propos',
+      type: 'image',
+      options: { hotspot: true },
+    },
+    {
       name: 'conceptTeaserText',
       title: 'Texte teaser "À propos" (homepage)',
       type: 'object',

@@ -28,6 +28,7 @@ export const siteSettingsQuery = `*[_type == "siteSettings"][0] {
   title, tagline, supertitle, heroCtaLabel,
   heroImage { asset-> },
   videoUrl,
+  conceptTeaserImage { asset-> },
   conceptTeaserText,
   footerTextSwiss, footerTextJapan,
   instagramUrl, copyright
