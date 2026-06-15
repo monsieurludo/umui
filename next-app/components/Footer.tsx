@@ -27,7 +27,7 @@ export default function Footer({ locale, siteSettings }: { locale: string; siteS
             </p>
             <h3 className="font-serif text-xl mb-3">{swiss?.name || 'ADIGARA Switzerland'}</h3>
             <p className="text-sm text-[#6B6B6B] leading-relaxed">
-              {swiss?.contactPerson || 'Ayako Yonaha'}<br />
+              {swiss?.contactPerson && <>{swiss.contactPerson}<br /></>}
               {swiss?.phone ? <>{swiss.phone}<br /></> : <>Tél +41 78 215 91 71<br /></>}
               {swiss?.email
                 ? <a href={`mailto:${swiss.email}`} className="hover:text-[#C8702A] transition-colors">{swiss.email}</a>
@@ -42,7 +42,7 @@ export default function Footer({ locale, siteSettings }: { locale: string; siteS
             <h3 className="font-serif text-xl mb-3">{japan?.name || 'Garaman Hall'}</h3>
             <p className="text-sm text-[#6B6B6B] leading-relaxed">
               {japan?.address ? <>{japan.address}<br /></> : <>314-1 Ginoza, 904-1302 Ginoza village<br />Okinawa, Japan<br /></>}
-              {japan?.contactPerson || 'Tomoya Ogoshi'}<br />
+              {japan?.contactPerson && <>{japan.contactPerson}<br /></>}
               {japan?.phone ? <>{japan.phone}<br /></> : null}
               {japan?.email
                 ? <a href={`mailto:${japan.email}`} className="hover:text-[#C8702A] transition-colors">{japan.email}</a>
