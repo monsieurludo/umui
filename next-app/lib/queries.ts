@@ -2,7 +2,7 @@ export const showDatesQuery = `*[_type == "showDate"] | order(date asc) {
   _id, date, city, venue, address, ticketUrl, status, eventLabel, notes
 }`
 
-export const artistsQuery = `*[_type == "artist"] | order(order asc) {
+export const artistsQuery = `*[_type == "artist" && defined(slug.current)] | order(order asc) {
   _id, name, slug, role, roleTag, group, photo { asset-> }, bio, order
 }`
 

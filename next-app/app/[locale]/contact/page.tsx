@@ -1,8 +1,9 @@
 export const revalidate = 0
 
+import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import { Locale, ContactInfo, Partner } from '@/lib/types'
-import { sanityClient } from '@/lib/sanity'
+import { sanityClient, urlFor } from '@/lib/sanity'
 import { contactInfoQuery, partnersQuery } from '@/lib/queries'
 
 const FALLBACK_SWISS_CONTACT = {
@@ -116,6 +117,7 @@ function ContactCard({ contact }: { contact: ContactBlock }) {
 }
 
 function ContactPage_Inner({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   locale,
   swissContact,
   japanContact,
@@ -147,27 +149,34 @@ function ContactPage_Inner({
 
       <div className="border-t border-[#E8E4DE] pt-16">
         <h2 className="font-serif text-2xl text-[#1A1A1A] mb-8">{t('partenaires')}</h2>
-        <ul className="space-y-3">
-          {partners.map(p => (
-            <li key={p._id} className="text-sm text-[#6B6B6B]">
-              {p.url ? (
-                <a
-                  href={p.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-[#C8702A] transition-colors"
-                >
-                  {p.name} ↗
-                </a>
-              ) : (
-                p.name
-              )}
-              {p.role?.[locale] && (
-                <span className="ml-2 text-xs text-[#9B9B9B]">{p.role[locale]}</span>
-              )}
-            </li>
-          ))}
-        </ul>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
+          {partners.map(p => {
+            const inner = (
+              <div className="flex flex-col items-start gap-3">
+                {p.logo?.asset ? (
+                  <div className="relative h-12 w-full">
+                    <Image
+                      src={urlFor(p.logo).height(96).url()}
+                      alt={p.name}
+                      fill
+                      className="object-contain object-left"
+                    />
+                  </div>
+                ) : null}
+                <span className="text-sm text-[#6B6B6B] hover:text-[#C8702A] transition-colors">
+                  {p.name}{p.url ? ' ↗' : ''}
+                </span>
+              </div>
+            )
+            return (
+              <div key={p._id}>
+                {p.url ? (
+                  <a href={p.url} target="_blank" rel="noopener noreferrer">{inner}</a>
+                ) : inner}
+              </div>
+            )
+          })}
+        </div>
       </div>
     </div>
   )

@@ -60,7 +60,15 @@ export default async function ArtistPage({ params: { locale, slug } }: { params:
 }
 
 export async function generateStaticParams() {
-  const slugs = ['kozue-miyagi', 'ruki-nakahara', 'iroha-nakachi', 'fuka-nakazato', 'takuya-shimabukuro', 'fumiya-iha', 'mina-mermoud', 'yomo-tagami', 'daniel-lopez', 'tomoya-ogoshi', 'denys-fontanarosa', 'igor-shin-moromisato', 'yuta-nakama']
-  const locales = ['fr', 'en']
-  return locales.flatMap(locale => slugs.map(slug => ({ locale, slug })))
+  try {
+    const artists = await sanityClient.fetch(
+      `*[_type == "artist" && defined(slug.current)]{ "slug": slug.current }`
+    )
+    const locales = ['fr', 'en']
+    return locales.flatMap((locale: string) =>
+      (artists as { slug: string }[]).map(({ slug }) => ({ locale, slug }))
+    )
+  } catch {
+    return []
+  }
 }
