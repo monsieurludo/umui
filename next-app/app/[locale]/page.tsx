@@ -48,7 +48,7 @@ async function getPageData(): Promise<{
 
 export default async function HomePage({ params: { locale } }: { params: { locale: Locale } }) {
   const { shows, siteSettings, conceptPage } = await getPageData()
-  const upcomingShows = shows.slice(0, 5)
+  const upcomingShows = shows
 
   const stats: { value: string; label: { fr: string; en: string } }[] =
     conceptPage?.stats?.length ? conceptPage.stats : FALLBACK_STATS
