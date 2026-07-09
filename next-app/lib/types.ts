@@ -22,6 +22,7 @@ export type ShowDate = {
   ticketUrl?: string
   status: 'confirmed' | 'pending' | 'sold-out'
   eventLabel?: string
+  eventTitle?: string
   notes?: LocalizedString
 }
 

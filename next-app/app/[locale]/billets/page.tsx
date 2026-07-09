@@ -24,23 +24,15 @@ async function getShows(): Promise<ShowDate[]> {
   }
 }
 
-function parseDateParts(dateStr: string) {
-  const [datePart, timePart] = dateStr.split('T')
-  const [year, month, day] = datePart.split('-').map(Number)
-  const [hour, minute] = (timePart || '00:00').split(':').map(Number)
-  return { year, month, day, hour, minute }
-}
+const TZ = 'Europe/Zurich'
 
 function formatDate(dateStr: string, locale: string) {
-  const { year, month, day } = parseDateParts(dateStr)
-  const d = new Date(Date.UTC(year, month - 1, day))
-  return d.toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-GB', {
-    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC'
+  return new Date(dateStr).toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-GB', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: TZ
   })
 }
 function formatTime(dateStr: string) {
-  const { hour, minute } = parseDateParts(dateStr)
-  return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
+  return new Date(dateStr).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: TZ })
 }
 
 export default async function BilletsPage({ params: { locale } }: { params: { locale: Locale } }) {
@@ -62,8 +54,8 @@ function BilletsInner({ shows, locale }: { shows: ShowDate[]; locale: Locale }) 
             className="flex flex-col sm:flex-row sm:items-center justify-between py-6 border-b border-[#E8E4DE] gap-4">
             <div>
               <p className="text-xs text-[#C8702A] font-medium tracking-wide mb-1">{formatDate(show.date, locale)}</p>
-              {show.eventLabel && (
-                <p className="text-xs text-[#6B6B6B] mb-1 italic">{show.eventLabel}</p>
+              {(show.eventTitle || show.eventLabel) && (
+                <p className="text-xs text-[#6B6B6B] mb-1 italic">{show.eventTitle || show.eventLabel}</p>
               )}
               <h3 className="font-serif text-xl text-[#1A1A1A]">{show.city}</h3>
               <p className="text-sm text-[#6B6B6B]">{show.venue} · {formatTime(show.date)}</p>

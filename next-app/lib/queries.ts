@@ -1,5 +1,5 @@
 export const showDatesQuery = `*[_type == "showDate"] | order(date asc) {
-  _id, date, city, venue, address, ticketUrl, status, eventLabel, notes
+  _id, date, city, venue, address, ticketUrl, status, eventLabel, eventTitle, notes
 }`
 
 export const artistsQuery = `*[_type == "artist" && defined(slug.current)] | order(order asc) {
