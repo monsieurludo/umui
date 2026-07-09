@@ -1,11 +1,22 @@
 import { ShowDate, Locale } from '@/lib/types'
 import { useTranslations } from 'next-intl'
 
+// Parse date string without timezone conversion (Sanity stores as local time)
+function parseDateParts(dateStr: string) {
+  const [datePart, timePart] = dateStr.split('T')
+  const [year, month, day] = datePart.split('-').map(Number)
+  const [hour, minute] = (timePart || '00:00').split(':').map(Number)
+  return { year, month, day, hour, minute }
+}
+
 function formatDay(dateStr: string) {
-  return new Date(dateStr).getDate().toString().padStart(2, '0')
+  return parseDateParts(dateStr).day.toString().padStart(2, '0')
 }
 function formatMonth(dateStr: string, locale: string) {
-  return new Date(dateStr).toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-GB', { month: 'short', year: 'numeric' })
+  const { year, month, day } = parseDateParts(dateStr)
+  // Use UTC date to avoid timezone shift
+  const d = new Date(Date.UTC(year, month - 1, day))
+  return d.toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-GB', { month: 'short', year: 'numeric', timeZone: 'UTC' })
 }
 
 export default function ShowDateCard({ show, locale }: { show: ShowDate; locale: Locale }) {

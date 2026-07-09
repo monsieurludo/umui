@@ -3,7 +3,8 @@ export default {
   title: 'Date de représentation',
   type: 'document',
   fields: [
-    { name: 'date', title: 'Date et heure', type: 'datetime', options: { dateFormat: 'DD/MM/YYYY', timeFormat: 'HH:mm' } },
+    { name: 'title', title: 'Titre de l\'événement (ex: Atelier enfants, Porrentruy)', type: 'string' },
+    { name: 'date', title: 'Date et heure', type: 'datetime', options: { dateFormat: 'DD/MM/YYYY', timeFormat: 'HH:mm', timeStep: 15 } },
     { name: 'city', title: 'Ville', type: 'string' },
     { name: 'venue', title: 'Lieu', type: 'string' },
     { name: 'address', title: 'Adresse', type: 'string' },
@@ -35,10 +36,11 @@ export default {
   ],
   orderings: [{ title: 'Date', name: 'dateAsc', by: [{ field: 'date', direction: 'asc' }] }],
   preview: {
-    select: { title: 'city', subtitle: 'date', venue: 'venue' },
-    prepare({ title, subtitle, venue }) {
-      const d = subtitle ? new Date(subtitle).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }) : ''
-      return { title: `${title} — ${venue}`, subtitle: d }
+    select: { title: 'title', city: 'city', subtitle: 'date', venue: 'venue' },
+    prepare({ title, city, subtitle, venue }) {
+      const d = subtitle ? subtitle.slice(0, 10) : ''
+      const label = title || (city && venue ? `${city} — ${venue}` : city || 'Nouvel événement')
+      return { title: label, subtitle: d }
     },
   },
 }
