@@ -86,7 +86,16 @@ export type SiteSettings = {
   footerTextSwiss?: FooterContact
   footerTextJapan?: FooterContact
   instagramUrl?: string
+  facebookUrl?: string
   copyright?: LocalizedString
+}
+
+export type ParallelActivity = {
+  _id: string
+  title: { fr: string; en: string }
+  description: { fr: any[]; en: any[] }
+  locations?: string[]
+  type: string
 }
 
 export type ConceptPage = {

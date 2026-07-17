@@ -91,6 +91,11 @@ export default {
       type: 'url',
     },
     {
+      name: 'facebookUrl',
+      title: 'Lien Facebook',
+      type: 'url',
+    },
+    {
       name: 'copyright',
       title: 'Texte copyright (footer)',
       type: 'object',

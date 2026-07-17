@@ -31,5 +31,9 @@ export const siteSettingsQuery = `*[_type == "siteSettings"][0] {
   conceptTeaserImage { asset-> },
   conceptTeaserText,
   footerTextSwiss, footerTextJapan,
-  instagramUrl, copyright
+  instagramUrl, facebookUrl, copyright
+}`
+
+export const parallelActivitiesQuery = `*[_type == "parallelActivity"] | order(_createdAt asc) {
+  _id, title, description, locations, type
 }`

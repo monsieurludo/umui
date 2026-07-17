@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import Image from 'next/image'
 import ShowDateCard from '@/components/ShowDateCard'
+import ImageLightbox from '@/components/ImageLightbox'
 import { sanityClient, urlFor } from '@/lib/sanity'
 import { showDatesQuery, siteSettingsQuery, conceptPageQuery } from '@/lib/queries'
 import { ShowDate, Locale, ConceptPage, SiteSettings } from '@/lib/types'
@@ -69,6 +70,8 @@ export default async function HomePage({ params: { locale } }: { params: { local
       conceptTeaserImage={conceptTeaserImage}
       videoUrl={siteSettings?.videoUrl || null}
       conceptTeaserText={siteSettings?.conceptTeaserText?.[locale] || null}
+      instagramUrl={siteSettings?.instagramUrl || null}
+      facebookUrl={siteSettings?.facebookUrl || null}
     />
   )
 }
@@ -83,6 +86,8 @@ function HomePage_Inner({
   conceptTeaserImage,
   videoUrl,
   conceptTeaserText,
+  instagramUrl,
+  facebookUrl,
 }: {
   shows: ShowDate[]
   locale: Locale
@@ -96,6 +101,8 @@ function HomePage_Inner({
   videoUrl: string | null
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   conceptTeaserText: any[] | null
+  instagramUrl: string | null
+  facebookUrl: string | null
 }) {
   const t = useTranslations('home')
   const th = useTranslations('hero')
@@ -190,20 +197,16 @@ function HomePage_Inner({
               {t('conceptLinkLabel')}
             </Link>
           </div>
-          <div className="aspect-[4/5] bg-[#F5F3F0] relative overflow-hidden">
-            {conceptTeaserImage ? (
-              <Image
-                src={urlFor(conceptTeaserImage).width(800).height(1000).url()}
-                alt="UMUI — Gardiens des Traditions"
-                fill
-                className="object-cover"
-              />
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <p className="text-sm text-[#6B6B6B]">Photo de performance</p>
-              </div>
-            )}
-          </div>
+          {conceptTeaserImage ? (
+            <ImageLightbox
+              src={urlFor(conceptTeaserImage).width(1200).height(1500).url()}
+              alt="UMUI — Gardiens des Traditions"
+            />
+          ) : (
+            <div className="aspect-[4/5] bg-[#F5F3F0] flex items-center justify-center">
+              <p className="text-sm text-[#6B6B6B]">Photo de performance</p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -225,6 +228,37 @@ function HomePage_Inner({
           </div>
         </div>
       </section>
+
+      {/* Follow us */}
+      {(instagramUrl || facebookUrl) && (
+        <section className="py-16 border-t border-[#E8E4DE]">
+          <div className="max-w-6xl mx-auto px-6 text-center">
+            <p className="text-xs font-medium tracking-widest text-[#6B6B6B] mb-6">FOLLOW US</p>
+            <div className="flex items-center justify-center gap-8">
+              {instagramUrl && (
+                <a href={instagramUrl} target="_blank" rel="noopener noreferrer"
+                  className="flex flex-col items-center gap-2 text-[#1A1A1A] hover:text-[#C8702A] transition-colors group">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                    <circle cx="12" cy="12" r="4"/>
+                    <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/>
+                  </svg>
+                  <span className="text-xs tracking-widest">INSTAGRAM</span>
+                </a>
+              )}
+              {facebookUrl && (
+                <a href={facebookUrl} target="_blank" rel="noopener noreferrer"
+                  className="flex flex-col items-center gap-2 text-[#1A1A1A] hover:text-[#C8702A] transition-colors group">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                  </svg>
+                  <span className="text-xs tracking-widest">FACEBOOK</span>
+                </a>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
     </>
   )
 }

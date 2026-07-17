@@ -1,8 +1,8 @@
 export const revalidate = 0
 
-import { Locale, ShowDate } from '@/lib/types'
+import { Locale, ShowDate, ParallelActivity } from '@/lib/types'
 import { sanityClient } from '@/lib/sanity'
-import { showDatesQuery } from '@/lib/queries'
+import { showDatesQuery, parallelActivitiesQuery } from '@/lib/queries'
 import ShowDateCard from '@/components/ShowDateCard'
 import { useTranslations } from 'next-intl'
 
@@ -16,21 +16,27 @@ const PLACEHOLDER_SHOWS: ShowDate[] = [
   { _id: '7', date: '2026-09-24T20:00:00', city: 'Zurich', venue: 'À confirmer', address: 'Zurich', status: 'pending' },
 ]
 
-async function getShows(): Promise<ShowDate[]> {
+async function getPageData(): Promise<{ shows: ShowDate[]; activities: ParallelActivity[] }> {
   try {
-    const shows = await sanityClient.fetch(showDatesQuery)
-    return shows?.length ? shows : PLACEHOLDER_SHOWS
+    const [shows, activities] = await Promise.all([
+      sanityClient.fetch(showDatesQuery),
+      sanityClient.fetch(parallelActivitiesQuery),
+    ])
+    return {
+      shows: shows?.length ? shows : PLACEHOLDER_SHOWS,
+      activities: activities || [],
+    }
   } catch {
-    return PLACEHOLDER_SHOWS
+    return { shows: PLACEHOLDER_SHOWS, activities: [] }
   }
 }
 
 export default async function ProgrammePage({ params: { locale } }: { params: { locale: Locale } }) {
-  const shows = await getShows()
-  return <ProgrammeInner shows={shows} locale={locale} />
+  const { shows, activities } = await getPageData()
+  return <ProgrammeInner shows={shows} activities={activities} locale={locale} />
 }
 
-function ProgrammeInner({ shows, locale }: { shows: ShowDate[]; locale: Locale }) {
+function ProgrammeInner({ shows, activities, locale }: { shows: ShowDate[]; activities: ParallelActivity[]; locale: Locale }) {
   const t = useTranslations('programme')
 
   return (
@@ -43,39 +49,43 @@ function ProgrammeInner({ shows, locale }: { shows: ShowDate[]; locale: Locale }
       </div>
 
       {/* Parallel activities */}
-      <div className="border-t border-[#E8E4DE] pt-16">
-        <h2 className="font-serif text-3xl text-[#1A1A1A] mb-10">{t('parallelTitle')}</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div>
-            <p className="text-xs font-medium tracking-widest text-[#C8702A] mb-3">EXPOSITION PHOTOGRAPHIQUE</p>
-            <h3 className="font-serif text-xl text-[#1A1A1A] mb-2">
-              {locale === 'fr' ? 'Photos de Yuta Nakama' : 'Photos by Yuta Nakama'}
-            </h3>
-            <p className="text-sm text-[#6B6B6B] leading-relaxed mb-3">
-              {locale === 'fr'
-                ? 'Une exposition photographique itinérante à travers les images de Yuta Nakama, photographe originaire de Ginoza où a été tourné le documentaire.'
-                : 'A travelling photography exhibition featuring images by Yuta Nakama, a photographer from Ginoza where the documentary was filmed.'}
-            </p>
-            <ul className="text-sm text-[#6B6B6B] space-y-1">
-              <li>· Japan Information and Cultural Center — Berne</li>
-              <li>· Galerie du Sauvage — Porrentruy</li>
-              <li>· Temple du Bas — Neuchâtel</li>
-              <li>· La Sage — Val d&apos;Hérens</li>
-            </ul>
-          </div>
-          <div>
-            <p className="text-xs font-medium tracking-widest text-[#C8702A] mb-3">ACTION CULTURELLE</p>
-            <h3 className="font-serif text-xl text-[#1A1A1A] mb-2">
-              {locale === 'fr' ? 'Lycée de Porrentruy' : 'Porrentruy High School'}
-            </h3>
-            <p className="text-sm text-[#6B6B6B] leading-relaxed">
-              {locale === 'fr'
-                ? 'Rencontres entre les artistes et des élèves, portant sur la thématique de la préservation du patrimoine culturel.'
-                : 'Meetings between artists and students on the theme of cultural heritage preservation.'}
-            </p>
+      {activities.length > 0 && (
+        <div className="border-t border-[#E8E4DE] pt-16">
+          <h2 className="font-serif text-3xl text-[#1A1A1A] mb-10">{t('parallelTitle')}</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {activities.map(activity => {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const descBlocks: any[] = activity.description?.[locale] || []
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const descParas = descBlocks.map((block: any) =>
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                block.children?.map((c: any) => c.text).join('') ?? ''
+              ).filter(Boolean)
+
+              return (
+                <div key={activity._id}>
+                  <p className="text-xs font-medium tracking-widest text-[#C8702A] mb-3">
+                    {activity.type.toUpperCase()}
+                  </p>
+                  <h3 className="font-serif text-xl text-[#1A1A1A] mb-2">
+                    {activity.title?.[locale] || activity.title?.fr || ''}
+                  </h3>
+                  {descParas.map((para, i) => (
+                    <p key={i} className="text-sm text-[#6B6B6B] leading-relaxed mb-3">{para}</p>
+                  ))}
+                  {activity.locations && activity.locations.length > 0 && (
+                    <ul className="text-sm text-[#6B6B6B] space-y-1">
+                      {activity.locations.map((loc, i) => (
+                        <li key={i}>· {loc}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )
+            })}
           </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }
