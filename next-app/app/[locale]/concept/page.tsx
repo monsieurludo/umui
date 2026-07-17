@@ -1,10 +1,10 @@
 export const revalidate = 0
 
 import { useTranslations } from 'next-intl'
-import Image from 'next/image'
 import type { Locale, ConceptPage } from '@/lib/types'
 import { sanityClient, urlFor } from '@/lib/sanity'
 import { conceptPageQuery } from '@/lib/queries'
+import ImageLightbox from '@/components/ImageLightbox'
 
 const filmTextFr = [
   `Vingt ans se sont écoulés depuis que je me suis installé à Okinawa. Pendant cette période, j'ai été témoin de la richesse culturelle unique de cette île issue d'anciennes traditions profondément enracinées dans la vie quotidienne des habitants de l'archipel.`,
@@ -78,14 +78,11 @@ function ConceptPage_Inner({
           </div>
           <div className="md:col-span-2 space-y-4">
             {images.filter((img) => img?.asset).length > 0 ? images.filter((img) => img?.asset).map((img, i) => (
-              <div key={i} className="aspect-[3/4] bg-[#F5F3F0] relative overflow-hidden">
-                <Image
-                  src={urlFor(img).width(600).height(800).url()}
-                  alt=""
-                  fill
-                  className="object-cover"
-                />
-              </div>
+              <ImageLightbox
+                key={i}
+                src={urlFor(img).width(1200).height(1600).url()}
+                alt=""
+              />
             )) : (
               <div className="aspect-[3/4] bg-[#F5F3F0] flex items-center justify-center">
                 <p className="text-sm text-[#6B6B6B]">Photo du film</p>
