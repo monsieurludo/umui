@@ -64,9 +64,11 @@ function ProgrammeInner({ shows, activities, locale }: { shows: ShowDate[]; acti
 
               return (
                 <div key={activity._id}>
-                  <p className="text-xs font-medium tracking-widest text-[#C8702A] mb-3">
-                    {activity.type.toUpperCase()}
-                  </p>
+                  {activity.type && (
+                    <p className="text-xs font-medium tracking-widest text-[#C8702A] mb-3">
+                      {activity.type.toUpperCase()}
+                    </p>
+                  )}
                   <h3 className="font-serif text-xl text-[#1A1A1A] mb-2">
                     {activity.title?.[locale] || activity.title?.fr || ''}
                   </h3>
