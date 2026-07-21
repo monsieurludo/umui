@@ -5,6 +5,7 @@ import type { Locale, ConceptPage } from '@/lib/types'
 import { sanityClient, urlFor } from '@/lib/sanity'
 import { conceptPageQuery } from '@/lib/queries'
 import ImageLightbox from '@/components/ImageLightbox'
+import RichText from '@/components/RichText'
 
 const filmTextFr = [
   `Vingt ans se sont écoulés depuis que je me suis installé à Okinawa. Pendant cette période, j'ai été témoin de la richesse culturelle unique de cette île issue d'anciennes traditions profondément enracinées dans la vie quotidienne des habitants de l'archipel.`,
@@ -28,35 +29,35 @@ async function getConceptPage(): Promise<ConceptPage | null> {
   }
 }
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-function renderBlocks(blocks: any[] | undefined): string[] {
-  if (!blocks?.length) return []
-  return blocks.map((block: any) => block.children?.map((c: any) => c.text).join('') ?? '')
-}
-/* eslint-enable @typescript-eslint/no-explicit-any */
-
 export default async function ConceptPage({ params: { locale } }: { params: { locale: Locale } }) {
   const conceptPage = await getConceptPage()
 
-  const filmBlocksSanity = renderBlocks(conceptPage?.filmDescription?.[locale])
-
-  const filmText = filmBlocksSanity.length ? filmBlocksSanity : (locale === 'fr' ? filmTextFr : filmTextEn)
+  // Use raw blocks from Sanity when available (preserves links/formatting)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const filmBlocks: any[] | null = conceptPage?.filmDescription?.[locale]?.length
+    ? conceptPage.filmDescription[locale]
+    : null
 
   const images = conceptPage?.images ?? []
+  const fallbackFilmText = locale === 'fr' ? filmTextFr : filmTextEn
 
   return (
     <ConceptPage_Inner
-      filmText={filmText}
+      filmBlocks={filmBlocks}
+      fallbackFilmText={fallbackFilmText}
       images={images}
     />
   )
 }
 
 function ConceptPage_Inner({
-  filmText,
+  filmBlocks,
+  fallbackFilmText,
   images,
 }: {
-  filmText: string[]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  filmBlocks: any[] | null
+  fallbackFilmText: string[]
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   images: any[]
 }) {
@@ -67,14 +68,19 @@ function ConceptPage_Inner({
       <h1 className="font-serif text-5xl md:text-6xl text-[#1A1A1A] mb-4">Concept</h1>
       <p className="text-[#6B6B6B] text-lg mb-20">UMUI — Gardiens des Traditions · Tournée Suisse 2026</p>
 
-      {/* Film section */}
       <section className="mb-20">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-12 items-start">
-          <div className="md:col-span-3 space-y-4 text-[#6B6B6B] leading-relaxed">
+          <div className="md:col-span-3">
             <p className="text-xs font-medium tracking-widest text-[#C8702A] mb-6">{t('filmLabel')}</p>
-            {filmText.map((para, i) => (
-              <p key={i}>{para}</p>
-            ))}
+            {filmBlocks ? (
+              <RichText blocks={filmBlocks} />
+            ) : (
+              <div className="space-y-4">
+                {fallbackFilmText.map((para, i) => (
+                  <p key={i} className="text-[#6B6B6B] leading-relaxed">{para}</p>
+                ))}
+              </div>
+            )}
           </div>
           <div className="md:col-span-2 space-y-4">
             {images.filter((img) => img?.asset).length > 0 ? images.filter((img) => img?.asset).map((img, i) => (

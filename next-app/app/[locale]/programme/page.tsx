@@ -4,6 +4,7 @@ import { Locale, ShowDate, ParallelActivity } from '@/lib/types'
 import { sanityClient } from '@/lib/sanity'
 import { showDatesQuery, parallelActivitiesQuery } from '@/lib/queries'
 import ShowDateCard from '@/components/ShowDateCard'
+import RichText from '@/components/RichText'
 import { useTranslations } from 'next-intl'
 
 const PLACEHOLDER_SHOWS: ShowDate[] = [
@@ -55,12 +56,7 @@ function ProgrammeInner({ shows, activities, locale }: { shows: ShowDate[]; acti
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {activities.map(activity => {
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const descBlocks: any[] = activity.description?.[locale] || []
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const descParas = descBlocks.map((block: any) =>
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                block.children?.map((c: any) => c.text).join('') ?? ''
-              ).filter(Boolean)
+              const descBlocks: any[] = (activity.description?.[locale as 'fr' | 'en'] || activity.description?.fr || []) as any[]
 
               return (
                 <div key={activity._id}>
@@ -72,11 +68,9 @@ function ProgrammeInner({ shows, activities, locale }: { shows: ShowDate[]; acti
                   <h3 className="font-serif text-xl text-[#1A1A1A] mb-2">
                     {activity.title?.[locale] || activity.title?.fr || ''}
                   </h3>
-                  {descParas.map((para, i) => (
-                    <p key={i} className="text-sm text-[#6B6B6B] leading-relaxed mb-3">{para}</p>
-                  ))}
+                  <RichText blocks={descBlocks} className="text-sm" />
                   {activity.locations && activity.locations.length > 0 && (
-                    <ul className="text-sm text-[#6B6B6B] space-y-1">
+                    <ul className="text-sm text-[#6B6B6B] space-y-1 mt-3">
                       {activity.locations.map((loc, i) => (
                         <li key={i}>· {loc}</li>
                       ))}
