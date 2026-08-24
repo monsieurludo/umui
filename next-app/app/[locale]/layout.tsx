@@ -3,6 +3,7 @@ export const revalidate = 0
 import type { Metadata } from 'next'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
+import { Analytics } from '@vercel/analytics/react'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import { sanityClient } from '@/lib/sanity'
@@ -40,6 +41,7 @@ export default async function LocaleLayout({
           <main className="pt-14">{children}</main>
           <Footer locale={locale} siteSettings={siteSettings} />
         </NextIntlClientProvider>
+        <Analytics />
       </body>
     </html>
   )
