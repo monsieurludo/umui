@@ -17,6 +17,7 @@ export default function Nav() {
     { href: `/${locale}/concept`, label: t('concept') },
     { href: `/${locale}/programme`, label: t('programme') },
     { href: `/${locale}/artistes`, label: t('artistes') },
+    { href: `/${locale}/spectacle`, label: t('spectacle') },
     { href: `/${locale}/billets`, label: t('billets') },
     { href: `/${locale}/contact`, label: t('contact') },
   ]

@@ -3,6 +3,7 @@
     "concept": "Concept",
     "programme": "Programme",
     "artistes": "Artistes",
+    "spectacle": "Spectacle",
     "billets": "Billets",
     "contact": "Contact"
   },
@@ -37,6 +38,10 @@
     "groupOkinawa": "Artistes d'Okinawa",
     "groupSwiss": "Musiciennes suisses",
     "groupFilm": "Équipe artistique"
+  },
+  "spectacle": {
+    "title": "Le Spectacle",
+    "subtitle": "Danses traditionnelles et classiques d'Okinawa"
   },
   "billets": {
     "title": "Billets",

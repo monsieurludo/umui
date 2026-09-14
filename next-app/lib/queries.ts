@@ -37,3 +37,8 @@ export const siteSettingsQuery = `*[_type == "siteSettings"][0] {
 export const parallelActivitiesQuery = `*[_type == "parallelActivity"] | order(_createdAt asc) {
   _id, title, description, locations, type
 }`
+
+export const spectaclePageQuery = `*[_type == "spectaclePage"][0] {
+  title, subtitle, body,
+  images[] { ..., asset-> }
+}`

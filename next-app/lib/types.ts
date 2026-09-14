@@ -98,6 +98,13 @@ export type ParallelActivity = {
   type: string
 }
 
+export type SpectaclePage = {
+  title?: LocalizedString
+  subtitle?: LocalizedString
+  body?: LocalizedText
+  images?: any[]
+}
+
 export type ConceptPage = {
   title: LocalizedString
   filmDescription: LocalizedText
